@@ -1,5 +1,23 @@
 {
   "nodes": {
+    "danalib": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1644934275,
+        "narHash": "sha256-DSlkJW4JqsyYf1NGH7HM9GSIMSqfFAkZmeLYYSLwUQ4=",
+        "owner": "ArdanaLabs",
+        "repo": "danalib",
+        "rev": "df61a424db79849eac87c2a810338e965fae7d0d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ArdanaLabs",
+        "repo": "danalib",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -33,6 +51,22 @@
     },
     "nixpkgs": {
       "locked": {
+        "lastModified": 1639161226,
+        "narHash": "sha256-75Y08ynJDTq6HHGIF+8IADBJSVip0UyWQH7jqSFnRR8=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "573095944e7c1d58d30fc679c81af63668b54056",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-21.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
         "lastModified": 1645379616,
         "narHash": "sha256-eLzR3MRS9hcNqSWZxP6BP7xiBjgC3/pB5n2Q0lLFe/g=",
         "owner": "nixos",
@@ -49,9 +83,10 @@
     },
     "root": {
       "inputs": {
+        "danalib": "danalib",
         "flake-compat": "flake-compat",
         "flake-compat-ci": "flake-compat-ci",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },

@@ -8,30 +8,19 @@
       flake = false;
     };
     flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
+    danalib.url = "github:ArdanaLabs/danalib";
   };
 
-  outputs = { self, nixpkgs, flake-compat, flake-compat-ci }:
+  outputs = { self, nixpkgs, flake-compat, flake-compat-ci, danalib }:
   let pkgs = import nixpkgs { system = "x86_64-linux"; };
   in
   {
     packages.x86_64-linux.uplc2c-architecture =
-     with pkgs;
-     let deps = [ (texlive.combine { inherit (texlive) scheme-basic amsmath graphics hyperref; }) ];
-     in
-       stdenv.mkDerivation {
-         name = "uplc2c-architecture";
-         src = ./src;
-         buildInputs = deps;
-         buildPhase = ''
-           mkdir -p $out
-           HOME=./. pdflatex uplc2c-architecture.tex
-           HOME=./. pdflatex uplc2c-architecture.tex
-           cp uplc2c-architecture.pdf "$out/UPLC2C Compiler and Runtime System Architecture.pdf"
-         '';
-         installPhase = ''
-           echo done
-         '';
-       };
+      danalib.internal.x86_64-linux.mkDoc
+      "uplc2c-architecture"
+      ./src
+      "uplc2c-architecture"
+      "UPLC2C Compiler and Runtime System Architecture";
 
     defaultPackage.x86_64-linux = self.packages.x86_64-linux.uplc2c-architecture;
 
