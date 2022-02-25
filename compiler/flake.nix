@@ -12,11 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:input-output-hk/haskell.nix";
     };
-    flake-utils.url = "github:numtide/flake-utils";
+    #flake-utils.follows = "github:numtide/flake-utils";
     plutus.url = "github:input-output-hk/plutus";
     cardano-node =
     {
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.url = "nixpkgs";
       url = "github:input-output-hk/cardano-node";
     };
     plutus-apps.url = "github:input-output-hk/plutus-apps";
