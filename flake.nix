@@ -16,9 +16,9 @@
   {
     packages.x86_64-linux = let pkgs = import nixpkgs { system = "x86_64-linux"; };
     in {
-     architecture = pkgs.callPackage ./.architecture/default.nix {};
+     architecture = pkgs.callPackage ./architecture/default.nix {};
      };
-     
+
      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
            flake = self;
            systems = [ "x86_64-linux" ];
