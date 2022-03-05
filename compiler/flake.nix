@@ -1,12 +1,26 @@
 {
   nixConfig.bash-prompt = "[nix-develop-uplc2c:] ";
   description = "A very basic flake";
-  inputs.haskellNix.url = "github:input-output-hk/haskell.nix";
-  inputs.nixpkgs.follows = "haskellNix/nixpkgs-unstable";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.plutus.url = "github:input-output-hk/plutus";
-  inputs.cardano-node.url = "github:input-output-hk/cardano-node";
-  inputs.plutus-apps.url = "github:input-output-hk/plutus-apps";
+  inputs =
+  {
+    # Nixpkgs set to specific URL for haskellNix
+    nixpkgs.url = "github:NixOS/nixpkgs/baaf9459d6105c243239289e1e82e3cdd5ac4809";
+    nixpkgs.follows = "haskellNix/nixpkgs-unstable";
+    #HaskellNix is implemented using a set nixpkgs.follows; allowing for flake-build
+    haskellNix =
+    {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:input-output-hk/haskell.nix";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
+    plutus.url = "github:input-output-hk/plutus";
+    cardano-node =
+    {
+      inputs.nixpkgs.url = "nixpkgs";
+      url = "github:input-output-hk/cardano-node";
+    };
+    plutus-apps.url = "github:input-output-hk/plutus-apps";
+  };
   outputs = { self, nixpkgs, plutus, flake-utils, haskellNix, cardano-node, plutus-apps }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
