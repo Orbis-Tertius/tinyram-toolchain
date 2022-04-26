@@ -1,19 +1,18 @@
 #include <stdint.h>
+#include <string.h>
+
+#include "mini-gmp.h"
 
 #define WORD int32_t
 #define WORD_BITS 32
 #define DWORD int64_t
 #define BOOL int
 
-const WORD MAX_WORD = 4294967295; // 2^32 - 1
-const DWORD WORD_BIT_MASK = 0xFFFFFFFF; // set to 1 for all and only bits in the first word
-
 // The heap size. This may need to be adjusted on a per-program basis.
-const WORD HEAP_SIZE = 1024 * 16;
+#define HEAP_SIZE (1024 * 16)
 
 // We represent program failure by non-termination.
-void diverge();
-
+void diverge() __attribute__((noreturn));
 
 /*****************************************************************************
  * Memory management
@@ -28,113 +27,63 @@ void diverge();
 // must set these global variables to point respectively to the end of the
 // heap (heap_end) and the next free byte in the heap (heap_free);
 
-extern void *heap_end;
-extern void *heap_free;
+extern unsigned char *heap_end;
+extern unsigned char *heap_free;
 
 // Allocates the given number of bytes of memory and returns a pointer to the
 // beginning of the allocated memory.
 void *alloc(WORD bytes);
 
-
 /*****************************************************************************
  * Integers
  *****************************************************************************/
 
-// Integers are unlimited in size. We store the sign of an integer
-// in the type tag. The rest of the integer is two words to represent a natural.
-// Natural numbers are represented as linked lists of words,
-// least significant word first.
-
-struct Natural {
-  WORD less_significant; // must be non-negative
-  struct Natural *more_significant; // null if this is the most significant word.
-};
-
 struct Integer {
-  WORD sign;
-  struct Natural *nat;
+  mpz_t mpz;
 };
-
-// Returns a fresh copy of the given natural number.
-struct Natural *copy_nat(struct Natural *a);
-
-// Adds a to b, destructively updating b.
-void add_nat(struct Natural *a, struct Natural *b);
-
-// Returns true if a is equal to b.
-BOOL eq_nat(struct Natural *a, struct Natural *b);
-
-// Returns true if a <= b.
-BOOL leq_nat(struct Natural *a, struct Natural *b);
-
-// Subtracts natural number a from integer b, destructively updating b.
-void subtract_nat(struct Natural *a, struct Integer *b);
-
-// Multiplies b by a, destructively updating b.
-void mul_nat(struct Natural *a, struct Natural *b);
-
-
-// Returns true if a is equal to b.
-BOOL eq_int(struct Integer *a, struct Integer *b);
-
-// Returns true if a is less than b.
-BOOL less_int(struct Integer *a, struct Integer *b);
-
-// Returns true if a <= b.
-BOOL leq_int(struct Integer *a, struct Integer *b);
-
-// Adds a to b, destructively updating b.
-void add_int(struct Integer *a, struct Integer *b);
-
-// Subtracts a from b, destructively updating b.
-void subtract_int(struct Integer *a, struct Integer *b);
-
-// Multiplies b by a, destructively updating b.
-void mul_int(struct Integer *a, struct Integer *b);
-
-// Divides b by a, storing the result truncated towards negative infinity in c.
-void div_int(struct Integer *a, struct Integer *b, struct Integer *c);
-
-// Divides b by a, storing the modulus in c. Identifies with div.
-void mod_int(struct Integer *a, struct Integer *b, struct Integer *c);
-
-// Divides b by a, storing the result truncated towards zero in c.
-void quotient_int(struct Integer *a, struct Integer *b, struct Integer *c);
-
-// Divides b by a, storing the remainder in c. Identifies with quotient.
-void remainder_int(struct Integer *a, struct Integer *b, struct Integer *c);
-
 
 /*****************************************************************************
  * ByteStrings
  *****************************************************************************/
 
 // This struct represents a Text or a ByteString depending on the type tag.
-// Text is UTF8-encoded, so the EncodeUtf8 and DecodeUtf8 builtins are no-ops on the
-// underlying ByteString; they only change the type tag.
+// Text is UTF8-encoded, so the EncodeUtf8 and DecodeUtf8 builtins are no-ops on
+// the underlying ByteString; they only change the type tag.
 struct ByteString {
-  int length;
-  char *bytes;
+  size_t length;
+  const uint8_t *bytes;
 };
 
-// Creates a new ByteString appending the two inputs. This also works for appending strings.
-struct ByteString *append_bytestring(struct ByteString *a, struct ByteString *b);
+/*****************************************************************************
+ * Data
+ *****************************************************************************/
 
-// Returns true if the two inputs are equal. This works for both strings and bytestrings.
-BOOL eq_bytestring(struct ByteString *a, struct ByteString *b);
+enum DataSort { ConstrS, MapS, ListS, IntegerS, ByteStringS };
 
-// Creates a new ByteString prepending the given byte.
-struct ByteString *cons_bytestring(char a, struct ByteString *b);
+struct ConstrValue {
+  const struct NFData *integerListPair; // (Integer, [Data])
+};
 
-// Creates a new ByteString which is a slice of the given ByteString.
-struct ByteString *slice_bytestring(struct ByteString *s, WORD start, WORD length);
+struct MapValue {
+  const struct NFData *pairList; // [(Data, Data)]
+};
 
-// Returns true if a is less than or equal to b in lexicographical byte order.
-struct ByteString *leq_bytestring(struct ByteString *a, struct ByteString *b);
+struct ListValue {
+  const struct NFData *list; // [Data]
+};
 
-// Returns true if a is less than b in lexicographical byte order.
-struct ByteString *less_bytestring(struct ByteString *a, struct ByteString *b);
+union DataValue {
+  struct ConstrValue constr;
+  struct MapValue map;
+  struct ListValue list;
+  const struct NFData *integer;
+  const struct NFData *byteString;
+};
 
+struct Data {
+  enum DataSort sort;
+  union DataValue value;
+};
 
 /*****************************************************************************
  * NFData
@@ -144,53 +93,67 @@ struct ByteString *less_bytestring(struct ByteString *a, struct ByteString *b);
 // words data (or equivalently, code) which is in beta normal form.
 
 enum NFDataType {
-    FunctionType
-  , IntegerPositive
-  , IntegerNegative
-  , UnitType
-  , BoolType
-  , ThunkType // (result of Delay)
-  , TextType
-  , ByteStringType
-  // , Data // TODO
+  FunctionType,
+  IntegerType,
+  UnitType,
+  BoolType,
+  ThunkType, // (result of Delay)
+  TextType,
+  ByteStringType,
+  PairType,
+  ListType,
+  DataType
 };
 
+struct LexicalScope;
 
 // The context is a LexicalScope and the output points
 // to an NFData, but these are not in the type to avoid
 // cyclic definitions.
-typedef void *(*Function) (void *context);
+typedef const struct NFData *(*Function)(const struct LexicalScope *context);
 
-// A function is represented by a closure, which is a function pointer together with
-// some data on the heap which it depends on. At this level of abstraction we
-// do not distinguish between builtin and user-defined functions.
+// A function is represented by a closure, which is a function pointer together
+// with some data on the heap which it depends on. At this level of abstraction
+// we do not distinguish between builtin and user-defined functions.
 struct Closure {
   Function apply;
-  void *data; // may be null if the function does not dereference the pointer
+  const struct LexicalScope
+      *scope; // may be null if the function does not dereference the pointer
 };
 
-typedef void (*Computation) (void *context);
+typedef void (*Computation)(void *context);
 
 // A thunk is effectively a closure over a function with no arguments.
 struct Thunk {
-  Computation run;
-  void *data;
+  Function run;
+  const struct LexicalScope *scope;
+};
+
+struct Pair {
+  const struct NFData *fst;
+  const struct NFData *snd;
+};
+
+struct List {
+  const struct NFData *elem;
+  const struct List *next;
 };
 
 union NFDataValue {
   struct Closure fn;
-  struct Natural nat;
+  struct Integer integer;
   int boolean;
-  int unit; // the value stored here is meaningless / does not affect execution
   struct Thunk thunk;
   struct ByteString byteString;
+  struct Pair pair;
+  const struct List *list;
+  struct Data data;
 };
 
 struct NFData {
   enum NFDataType type;
   union NFDataValue value;
 };
-
 
 /*****************************************************************************
  * Lexical scopes
@@ -199,6 +162,69 @@ struct NFData {
 // A lexical scope is represented as a linked list of variable bindings,
 // with the lower de Bruijn indices being first.
 struct LexicalScope {
-  struct NFData *first;
-  struct LexicalScope *rest;
+  const struct NFData *first;
+  const struct LexicalScope *rest;
 };
+
+#ifdef __cplusplus
+extern "C"
+#endif
+    void
+    print(const struct NFData *data);
+
+int compare_bytestring(const struct ByteString *bs1,
+                       const struct ByteString *bs2);
+
+#define DEF(name) const struct NFData *name(const struct LexicalScope *scope)
+
+DEF(builtin_add_integer);
+DEF(builtin_multiply_integer);
+DEF(builtin_divide_integer);
+DEF(builtin_equals_integer);
+DEF(builtin_leq_integer);
+DEF(builtin_less_integer);
+DEF(builtin_mod_integer);
+DEF(builtin_quotient_integer);
+DEF(builtin_remainder_integer);
+DEF(builtin_subtract_integer);
+
+DEF(builtin_fst_pair);
+DEF(builtin_snd_pair);
+
+DEF(builtin_head_list);
+DEF(builtin_tail_list);
+DEF(builtin_null_list);
+DEF(builtin_mk_cons);
+
+DEF(builtin_if_then_else);
+DEF(builtin_choose_unit);
+
+DEF(builtin_constr_data);
+DEF(builtin_map_data);
+DEF(builtin_list_data);
+DEF(builtin_idata);
+DEF(builtin_bdata);
+DEF(builtin_un_constr_data);
+DEF(builtin_un_map_data);
+DEF(builtin_un_list_data);
+DEF(builtin_un_idata);
+DEF(builtin_un_bdata);
+DEF(builtin_mk_nil_data);
+DEF(builtin_mk_nil_pair_data);
+DEF(builtin_mk_pair_data);
+
+DEF(builtin_append_bytestring);
+DEF(builtin_cons_bytestring);
+DEF(builtin_slice_bytestring);
+DEF(builtin_length_bytestring);
+DEF(builtin_index_bytestring);
+DEF(builtin_equals_bytestring);
+DEF(builtin_less_bytestring);
+DEF(builtin_leq_bytestring);
+
+DEF(builtin_append_string);
+DEF(builtin_equals_string);
+DEF(builtin_encode_utf8);
+DEF(builtin_decode_utf8);
+
+DEF(builtin_trace);

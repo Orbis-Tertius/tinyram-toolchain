@@ -19,6 +19,7 @@ import           UPLC2C.Types.OutputFilePath (OutputFilePath (..))
 import           Control.Monad               (void)
 import           Control.Monad.Except        (runExcept, runExceptT)
 import           Data.Bifunctor              (bimap)
+import           Debug.Trace                 (trace)
 import           PlutusCore                  (DeBruijn)
 import           PlutusCore.Error            (Error)
 import           PlutusCore.Quote            (runQuote)
@@ -94,7 +95,7 @@ compileFile True (InputFilePath inFilePath) (OutputFilePath outFilePath) = do
     inFileBytes <- liftIO $ readFile inFilePath
     case parsePLC inFileBytes of
       Right (UPLC.Program _ _ term) -> do
-        CCode objectCode <- compile term
+        CCode objectCode <- trace ("term: " ++ show term) $ compile term
         liftIO $ writeFile outFilePath objectCode
       Left e ->
         liftIO $ putStrLn ("input is not a valid PLC file: " ++ show e)
