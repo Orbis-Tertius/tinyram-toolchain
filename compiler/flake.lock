@@ -105,11 +105,7 @@
         "customConfig": "customConfig",
         "haskellNix": "haskellNix",
         "iohkNix": "iohkNix",
-        "nixpkgs": [
-          "cardano-node",
-          "haskellNix",
-          "nixpkgs-2105"
-        ],
+        "nixpkgs": "nixpkgs",
         "utils": "utils"
       },
       "locked": {
@@ -525,8 +521,7 @@
         "hpc-coveralls": "hpc-coveralls_2",
         "nix-tools": "nix-tools_2",
         "nixpkgs": [
-          "haskellNix",
-          "nixpkgs-2105"
+          "nixpkgs"
         ],
         "nixpkgs-2003": "nixpkgs-2003_2",
         "nixpkgs-2009": "nixpkgs-2009_2",
@@ -667,20 +662,17 @@
       }
     },
     "nixpkgs": {
-      "flake": false,
       "locked": {
-        "lastModified": 1628785280,
-        "narHash": "sha256-2B5eMrEr6O8ff2aQNeVxTB+9WrGE80OB4+oM6T7fOcc=",
+        "lastModified": 1653918805,
+        "narHash": "sha256-6ahwAnBNGgqSNSn/6RnsxrlFi+fkA+RyT6o/5S1915o=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6525bbc06a39f26750ad8ee0d40000ddfdc24acb",
+        "rev": "a0a69be4b5ee63f1b5e75887a406e9194012b492",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
+        "id": "nixpkgs",
+        "type": "indirect"
       }
     },
     "nixpkgs-2003": {
@@ -828,6 +820,23 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1628785280,
+        "narHash": "sha256-2B5eMrEr6O8ff2aQNeVxTB+9WrGE80OB4+oM6T7fOcc=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6525bbc06a39f26750ad8ee0d40000ddfdc24acb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "npmlock2nix": {
       "flake": false,
       "locked": {
@@ -886,7 +895,7 @@
         "haskell-language-server": "haskell-language-server",
         "haskell-nix": "haskell-nix",
         "iohk-nix": "iohk-nix",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix",
         "sphinxcontrib-haddock": "sphinxcontrib-haddock",
         "stackage-nix": "stackage-nix"
@@ -915,7 +924,7 @@
         "haskell-language-server": "haskell-language-server_2",
         "haskell-nix": "haskell-nix_2",
         "iohk-nix": "iohk-nix_2",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "npmlock2nix": "npmlock2nix",
         "plutus-core": "plutus-core",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix_2",
