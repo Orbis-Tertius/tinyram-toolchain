@@ -3,7 +3,7 @@
   description = "Parent flake for subfolders";
   inputs =
   {
-    uplc2c.url = "path:./compiler";
+    get-flake.url = "github:ursi/get-flake";
 
     #CI integration
     flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
@@ -12,7 +12,8 @@
       flake = false;
     };
   };
-  outputs = { self, nixpkgs, uplc2c, flake-compat, flake-compat-ci }:
+  outputs = { self, get-flake, nixpkgs, flake-compat, flake-compat-ci }:
+  let uplc2c = get-flake ./compiler; in
   {
     packages.x86_64-linux = let pkgs = import nixpkgs { system = "x86_64-linux"; };
     in {
