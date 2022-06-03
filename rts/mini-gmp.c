@@ -44,11 +44,14 @@ see https://www.gnu.org/licenses/.  */
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "mini-gmp.h"
+
+#if !defined(_STDIO_H)
+#define fprintf(...)
+#endif
 
 #if !defined(MINI_GMP_DONT_USE_FLOAT_H)
 #include <float.h>
@@ -1660,6 +1663,7 @@ mpz_roinit_n (mpz_t x, mp_srcptr xp, mp_size_t xs)
   return x;
 }
 
+#if !defined(MINI_GMP_DONT_USE_FLOAT_H)
 
 /* Conversions and comparison to double. */
 void
@@ -1817,6 +1821,7 @@ mpz_cmp_d (const mpz_t x, double d)
 	return mpz_cmpabs_d (x, d);
     }
 }
+#endif
 
 
 /* MPZ comparisons and the like. */
@@ -4262,6 +4267,7 @@ mpz_get_str (char *sp, int base, const mpz_t u)
   return sp;
 }
 
+#if 0
 int
 mpz_set_str (mpz_t r, const char *sp, int base)
 {
@@ -4373,7 +4379,10 @@ mpz_init_set_str (mpz_t r, const char *sp, int base)
   mpz_init (r);
   return mpz_set_str (r, sp, base);
 }
+#endif
 
+
+#ifdef _STDIO_H
 size_t
 mpz_out_str (FILE *stream, int base, const mpz_t x)
 {
@@ -4388,6 +4397,7 @@ mpz_out_str (FILE *stream, int base, const mpz_t x)
   gmp_free (str);
   return len;
 }
+#endif
 
 
 static int
