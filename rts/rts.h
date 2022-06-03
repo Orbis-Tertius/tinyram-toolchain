@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <string.h>
 
 #include "mini-gmp.h"
 

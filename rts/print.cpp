@@ -1,3 +1,12 @@
+
+#include "rts.h"
+
+#ifdef __tinyRAM__
+
+void print(const struct NFData *data) {(void)data;}
+
+#else
+
 #include <cstdio>
 #include <iomanip>
 #include <ios>
@@ -6,7 +15,6 @@
 #include <string>
 
 #include "mini-gmp.h"
-#include "rts.h"
 
 std::string _print(const struct NFData *data) {
   switch (data->type) {
@@ -87,3 +95,5 @@ std::string _print(const struct NFData *data) {
 extern "C" void print(const struct NFData *data) {
   std::cout << _print(data) << std::endl;
 }
+
+#endif

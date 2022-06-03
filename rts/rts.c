@@ -2,8 +2,6 @@
 // This C code is to be included in the uplc2c compiler output for each program.
 // This RTS is designed for compact code more so than performance or efficiency.
 
-#include <stdio.h>
-
 #include "./rts.h"
 
 void diverge() {
