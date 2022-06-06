@@ -3,11 +3,13 @@ cmake_minimum_required(VERSION 3.4.1)
 FILE(GLOB Sources "*.plc.c")
 
 foreach(s ${Sources})
-  get_filename_component(lib_we ${s} NAME_WE)
-  add_executable(${lib_we}.bin ${s})
-  target_link_libraries(${lib_we}.bin uplc2c_rts bootstrap)
+  get_filename_component(test ${s} NAME_WE)
+  add_executable(${test} ${s})
+  target_link_libraries(${test} rts)
 
-  target_link_options(${lib_we}.bin PUBLIC "-T${CMAKE_SOURCE_DIR}/tinyRAM.ld")
-  #set_target_properties(${lib_we}.bin PROPERTIES LINK_DEPENDS ${CMAKE_SOURCE_DIR}/tinyRAM.ld)
+  if (${CMAKE_CROSSCOMPILING})
+    target_link_options(${test} PUBLIC "-T${CMAKE_SOURCE_DIR}/tinyRAM.ld")
+    target_link_libraries(${test} bootstrap)
+  endif()
 endforeach()
 
