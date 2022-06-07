@@ -227,3 +227,4 @@ DEF(builtin_encode_utf8);
 DEF(builtin_decode_utf8);
 
 DEF(builtin_trace);
+DEF(builtin_error);
