@@ -31,7 +31,7 @@ extern unsigned char *heap_free;
 
 // Allocates the given number of bytes of memory and returns a pointer to the
 // beginning of the allocated memory.
-void *alloc(WORD bytes);
+void *alloc(size_t bytes);
 
 /*****************************************************************************
  * Integers
