@@ -18,7 +18,7 @@ unsigned char _heap[HEAP_SIZE];
 unsigned char *heap_end = &_heap[0] + HEAP_SIZE;
 unsigned char *heap_free = &_heap[0];
 
-void *alloc(WORD bytes) {
+void *alloc(size_t bytes) {
   if (heap_free + bytes < heap_end) {
     void *new_mem = heap_free;
     heap_free += bytes;
