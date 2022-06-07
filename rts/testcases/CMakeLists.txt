@@ -10,6 +10,12 @@ foreach(s ${Sources})
   if (${CMAKE_CROSSCOMPILING})
     target_link_options(${test} PUBLIC "-T${CMAKE_SOURCE_DIR}/tinyRAM.ld")
     target_link_libraries(${test} bootstrap)
+
+    add_custom_command(
+      TARGET ${test}
+      POST_BUILD
+      COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${CMAKE_CURRENT_BINARY_DIR}/${test} ${CMAKE_CURRENT_BINARY_DIR}/${test}.bin
+    )
   endif()
 endforeach()
 
