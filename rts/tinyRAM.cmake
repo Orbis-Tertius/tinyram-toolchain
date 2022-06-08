@@ -14,9 +14,9 @@ set(CMAKE_CXX_COMPILER              ${TINYRAM_TOOLCHAIN_PATH}clang++)
 set(CMAKE_CUSTOM_LINKER             ${TINYRAM_TOOLCHAIN_PATH}ld.lld)
 set(CMAKE_LINKER                    ${TINYRAM_TOOLCHAIN_PATH}ld.lld)
 set(CMAKE_C_LINK_EXECUTABLE
-    "/home/marcin/projects/llvm-project/build/bin/ld.lld <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+    "/home/marcin/projects/llvm-project/build/bin/ld.lld --entry main <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE
-    "/home/marcin/projects/llvm-project/build/bin/ld.lld  <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+    "/home/marcin/projects/llvm-project/build/bin/ld.lld --entry main <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_OBJCOPY                   ${TINYRAM_TOOLCHAIN_PATH}llvm-objcopy)
 set(CMAKE_RANLIB                    ${TINYRAM_TOOLCHAIN_PATH}llvm-ranlib)
 set(CMAKE_SIZE                      ${TINYRAM_TOOLCHAIN_PATH}llvm-size)
