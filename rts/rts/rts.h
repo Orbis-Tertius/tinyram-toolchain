@@ -8,7 +8,7 @@
 #define BOOL int
 
 // The heap size. This may need to be adjusted on a per-program basis.
-#define HEAP_SIZE (1024 * 16)
+#define HEAP_SIZE (1024 * 128)
 
 // We represent program failure by non-termination.
 void diverge() __attribute__((noreturn));
