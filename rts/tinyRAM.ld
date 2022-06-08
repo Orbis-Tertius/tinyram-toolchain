@@ -7,8 +7,8 @@ SECTIONS
 
     .text : 
     {
-	*(.preamble_section)
-	*(.start_section)
+	KEEP(*(.preamble_section))
+	KEEP(*(.start_section))
         *(.text)
     }
 
