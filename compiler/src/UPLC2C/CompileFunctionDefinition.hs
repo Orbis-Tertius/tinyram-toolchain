@@ -1,6 +1,7 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE TypeApplications #-}
 
 module UPLC2C.CompileFunctionDefinition ( compileFunctionDefinition ) where
 
@@ -20,6 +21,8 @@ import           UPLC2C.Types.CFunctionDefinition (CFunctionDefinition (..))
 import           UPLC2C.Types.CName               (CName (..))
 import           UPLC2C.Types.DeBruijnIndex       (DeBruijnIndex (..))
 
+import qualified Data.Word                        as Word
+import qualified Data.Int                         as Int
 
 compileFunctionDefinition :: CName -> CFunctionDefinition -> CCode
 compileFunctionDefinition name =
@@ -139,20 +142,51 @@ const struct NFData *%s (const struct LexicalScope *scope) {
 }
   |]
 
-
 compileConstantInteger :: CName -> Integer -> CCode
-compileConstantInteger (CName name) val =
-  CCode . pack $ printf constantIntegerTemplate name val
+compileConstantInteger (CName name) val
+  | val >= 0 && val <= fromIntegral (maxBound @Word.Word32) =
+    CCode . pack $ printf constantIntegerTemplateSI name val
+  | val < 0 && val >= fromIntegral (minBound @Int.Int32) =
+    CCode . pack $ printf constantIntegerTemplateUI name val
+  | otherwise =
+    CCode . pack $ printf constantIntegerTemplateChar name val
 
 
-constantIntegerTemplate :: String
-constantIntegerTemplate =
+constantIntegerTemplateSI :: String
+constantIntegerTemplateSI =
   [r|
 const struct NFData *%s (const struct LexicalScope *scope) {
   struct NFData *result = (struct NFData *)alloc(sizeof(struct NFData));
   result->type = IntegerType;
   mpz_init(result->value.integer.mpz);
   mpz_set_si(result->value.integer.mpz, %d);
+
+  return result;
+}
+  |]
+
+constantIntegerTemplateUI :: String
+constantIntegerTemplateUI =
+  [r|
+const struct NFData *%s (const struct LexicalScope *scope) {
+  struct NFData *result = (struct NFData *)alloc(sizeof(struct NFData));
+  result->type = IntegerType;
+  mpz_init(result->value.integer.mpz);
+  mpz_set_ui(result->value.integer.mpz, %d);
+
+  return result;
+}
+  |]
+
+
+constantIntegerTemplateChar :: String
+constantIntegerTemplateChar =
+  [r|
+const struct NFData *%s (const struct LexicalScope *scope) {
+  struct NFData *result = (struct NFData *)alloc(sizeof(struct NFData));
+  result->type = IntegerType;
+  mpz_init(result->value.integer.mpz);
+  mpz_set_str(result->value.integer.mpz, "%d", 10);
 
   return result;
 }
