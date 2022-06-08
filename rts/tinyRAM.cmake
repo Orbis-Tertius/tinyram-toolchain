@@ -25,8 +25,8 @@ set(CMAKE_STRIP                     ${TINYRAM_TOOLCHAIN_PATH}llvm-strip)
 #set(CMAKE_C_FLAGS                   "-Wno-psabi --specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections" CACHE INTERNAL "")
 #set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS} -fno-exceptions" CACHE INTERNAL "")
 
-set(CMAKE_C_FLAGS                   "-target tinyRAM -std=c11")
-set(CMAKE_CXX_FLAGS                 "-target tinyRAM")
+set(CMAKE_C_FLAGS                   "-target tinyRAM -std=c11 -mllvm -enable-tail-merge=false")
+set(CMAKE_CXX_FLAGS                 "-target tinyRAM -mllvm -enable-tail-merge=false")
 set(CMAKE_ASM_FLAGS                 "-target tinyRAM")
 
 set(CMAKE_ASM_FLAGS_DEBUG           "-O0" CACHE INTERNAL "")
