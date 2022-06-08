@@ -4267,7 +4267,7 @@ mpz_get_str (char *sp, int base, const mpz_t u)
   return sp;
 }
 
-#if 0
+#if 1
 int
 mpz_set_str (mpz_t r, const char *sp, int base)
 {
