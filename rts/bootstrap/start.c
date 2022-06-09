@@ -2,7 +2,7 @@
 
 extern int main(void);
 
-#define START_ATTR  __attribute__((__section__(".start_section")))
+#define START_ATTR  __attribute__((used, __section__(".start_section")))
 
 void START_ATTR start() {
   int result = main();
