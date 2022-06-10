@@ -1,0 +1,3 @@
+(program 1.0.0
+    [(builtin mkPairData) [(builtin iData) (con integer 42)] [(builtin iData) (con integer 43)]]
+)
