@@ -2,7 +2,7 @@
 
 const struct NFData *builtin_bdata__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

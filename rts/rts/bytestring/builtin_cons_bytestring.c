@@ -3,14 +3,15 @@
 #include <string.h>
 
 static uint8_t fromIntegral(const struct Integer *integer) {
-  unsigned long int z = mpz_get_ui(integer->mpz);
-  return (uint8_t)(z & 0xff);
+  int v1 = mpz_get_si(integer->mpz);
+  char v2 = v1;
+  return (uint8_t)v2;
 }
 
 const struct NFData *
 builtin_cons_bytestring__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   const struct Integer *integer = &scope->rest->first->value.integer;
@@ -35,7 +36,7 @@ builtin_cons_bytestring__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_cons_bytestring__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

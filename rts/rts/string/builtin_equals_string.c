@@ -5,7 +5,7 @@
 const struct NFData *
 builtin_equals_string__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != TextType) {
-    diverge();
+    error_out();
   }
 
   const struct ByteString *bs1 = &scope->rest->first->value.byteString;
@@ -21,7 +21,7 @@ builtin_equals_string__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_equals_string__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != TextType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

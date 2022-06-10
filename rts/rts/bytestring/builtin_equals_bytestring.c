@@ -20,7 +20,7 @@ int compare_bytestring(const struct ByteString *bs1,
 const struct NFData *
 builtin_equals_bytestring__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   const struct ByteString *bs1 = &scope->rest->first->value.byteString;
@@ -36,7 +36,7 @@ builtin_equals_bytestring__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_equals_bytestring__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

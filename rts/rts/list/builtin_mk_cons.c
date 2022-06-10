@@ -1,14 +1,14 @@
 #include "rts.h"
 
 const struct NFData *builtin_mk_cons__app_2(const struct LexicalScope *scope) {
-  if (scope->rest->first->type != ListType) {
-    diverge();
+  if (scope->first->type != ListType) {
+    error_out();
   }
 
   // no check to prevent heterogenous lists yet
 
-  const struct NFData *x = scope->first;
-  const struct NFData *xs = scope->rest->first;
+  const struct NFData *xs = scope->first;
+  const struct NFData *x = scope->rest->first;
 
   struct List *new_list = (struct List *)alloc(sizeof(struct List));
   new_list->elem = x;

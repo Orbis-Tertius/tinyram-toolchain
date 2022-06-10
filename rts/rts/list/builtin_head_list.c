@@ -3,11 +3,11 @@
 const struct NFData *
 builtin_head_list__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != ListType) {
-    diverge();
+    error_out();
   }
 
   if (scope->first->value.list == 0) {
-    diverge();
+    error_out();
   }
 
   return scope->first->value.list->elem;

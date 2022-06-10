@@ -14,7 +14,7 @@ builtin_choose_unit__app_1(const struct LexicalScope *scope) {
   data->value.fn.scope = scope;
 
   if (scope->first->type != UnitType) {
-    diverge();
+    error_out();
   }
 
   return data;

@@ -6,20 +6,20 @@
 const struct NFData *
 builtin_index_bytestring__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   const struct Integer *integer = &scope->first->value.integer;
   const struct ByteString *bs = &scope->rest->first->value.byteString;
 
   if (-1 == mpz_sgn(integer->mpz)) {
-    diverge();
+    error_out();
   }
 
   const unsigned long int index = mpz_get_ui(integer->mpz);
 
   if (index >= bs->length) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));
@@ -33,7 +33,7 @@ builtin_index_bytestring__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_index_bytestring__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

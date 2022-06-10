@@ -3,7 +3,7 @@
 const struct NFData *
 builtin_mk_pair_data__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != DataType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));
@@ -18,7 +18,7 @@ builtin_mk_pair_data__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_mk_pair_data__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != DataType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));
