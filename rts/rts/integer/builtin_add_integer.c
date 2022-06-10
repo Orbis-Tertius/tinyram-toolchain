@@ -4,7 +4,7 @@
 const struct NFData *
 builtin_add_integer__partially_app_2(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *op2 = (struct NFData *)scope->first;
@@ -23,7 +23,7 @@ builtin_add_integer__partially_app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_add_integer__partially_app_1(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

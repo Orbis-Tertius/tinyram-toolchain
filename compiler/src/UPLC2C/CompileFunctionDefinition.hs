@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE QuasiQuotes       #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeApplications  #-}
 
 module UPLC2C.CompileFunctionDefinition ( compileFunctionDefinition ) where
 
@@ -21,8 +21,8 @@ import           UPLC2C.Types.CFunctionDefinition (CFunctionDefinition (..))
 import           UPLC2C.Types.CName               (CName (..))
 import           UPLC2C.Types.DeBruijnIndex       (DeBruijnIndex (..))
 
-import qualified Data.Word                        as Word
 import qualified Data.Int                         as Int
+import qualified Data.Word                        as Word
 
 compileFunctionDefinition :: CName -> CFunctionDefinition -> CCode
 compileFunctionDefinition name =
@@ -99,7 +99,7 @@ const struct NFData *%s (const struct LexicalScope *scope) {
 
     return operatorResult->value.fn.apply(new_scope);
   } else {
-    diverge();
+    error_out();
   }
 }
   |]
@@ -137,7 +137,7 @@ const struct NFData *%s (const struct LexicalScope *scope) {
     struct Thunk thunk = operandResult->value.thunk;
     return thunk.run(thunk.scope);
   } else {
-    diverge();
+    error_out();
   }
 }
   |]
@@ -145,9 +145,9 @@ const struct NFData *%s (const struct LexicalScope *scope) {
 compileConstantInteger :: CName -> Integer -> CCode
 compileConstantInteger (CName name) val
   | val >= 0 && val <= fromIntegral (maxBound @Word.Word32) =
-    CCode . pack $ printf constantIntegerTemplateSI name val
-  | val < 0 && val >= fromIntegral (minBound @Int.Int32) =
     CCode . pack $ printf constantIntegerTemplateUI name val
+  | val < 0 && val >= fromIntegral (minBound @Int.Int32) =
+    CCode . pack $ printf constantIntegerTemplateSI name val
   | otherwise =
     CCode . pack $ printf constantIntegerTemplateChar name val
 

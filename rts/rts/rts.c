@@ -9,17 +9,26 @@ void diverge() {
   }
 }
 
+void error_out() {
+#ifdef __tinyRAM__
+  diverge();
+#else
+  void abort(void);
+  abort();
+#endif
+}
+
 /*****************************************************************************
  * Memory management
  *****************************************************************************/
 
-unsigned char _heap[HEAP_SIZE]  __attribute__ ((aligned (4)));
+unsigned char _heap[HEAP_SIZE] __attribute__((aligned(4)));
 
 unsigned char *heap_end = &_heap[0] + HEAP_SIZE;
 unsigned char *heap_free = &_heap[0];
 
 void *alloc(size_t bytes) {
-  bytes = ((bytes + 3)/4)*4;
+  bytes = ((bytes + 3) / 4) * 4;
 
   if (heap_free + bytes < heap_end) {
     unsigned char *new_mem = heap_free;

@@ -3,7 +3,7 @@
 
 #ifdef __tinyRAM__
 
-void print(const struct NFData *data) {(void)data;}
+void print(const struct NFData *data) { (void)data; }
 
 #else
 
@@ -20,6 +20,7 @@ std::string _print(const struct NFData *data) {
   switch (data->type) {
   case IntegerType: {
     std::string r = mpz_get_str(nullptr, 10, data->value.integer.mpz);
+
     return r;
   }
 
@@ -38,11 +39,20 @@ std::string _print(const struct NFData *data) {
 
   case ByteStringType: {
     std::stringstream ss;
-    ss << "0x";
-    ss << std::setfill('0') << std::setw(2);
-    for (size_t i = 0; i < data->value.byteString.length; i++) {
-      ss << std::hex << *(data->value.byteString.bytes + i);
+    ss << "{";
+
+    const auto length = data->value.byteString.length;
+
+    if (length != 0) {
+      for (size_t i = 0; i < length - 1; i++) {
+        ss << std::to_string(*(data->value.byteString.bytes + i));
+        ss << ",";
+      }
+
+      ss << std::to_string(*(data->value.byteString.bytes + length - 1));
     }
+
+    ss << "}";
     return ss.str();
   };
 
@@ -92,8 +102,6 @@ std::string _print(const struct NFData *data) {
   }
 }
 
-extern "C" void print(const struct NFData *data) {
-  std::cout << _print(data) << std::endl;
-}
+extern "C" void print(const struct NFData *data) { std::cout << _print(data); }
 
 #endif

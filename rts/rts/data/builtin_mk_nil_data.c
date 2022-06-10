@@ -3,7 +3,7 @@
 const struct NFData *
 builtin_mk_nil_data__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != UnitType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

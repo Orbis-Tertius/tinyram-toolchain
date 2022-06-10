@@ -4,24 +4,24 @@ const struct NFData *
 builtin_choose_list__app_3(const struct LexicalScope *scope) {
   const struct LexicalScope *s = scope;
 
-  const struct NFData *list = s->first;
-  s = s->rest;
-
   const struct NFData *v1 = s->first;
   s = s->rest;
 
   const struct NFData *v2 = s->first;
+  s = s->rest;
+
+  const struct NFData *list = s->first;
 
   if (list->type != ListType) {
-    diverge();
+    error_out();
   }
 
   // no type safety yet (type v1 == type v2)
 
   if (list->value.list == 0) {
-    return v1;
-  } else {
     return v2;
+  } else {
+    return v1;
   }
 }
 

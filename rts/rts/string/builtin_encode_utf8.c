@@ -5,7 +5,7 @@
 const struct NFData *
 builtin_encode_utf8__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != TextType) {
-    diverge();
+    error_out();
   }
 
   const struct ByteString *bs = &scope->first->value.byteString;

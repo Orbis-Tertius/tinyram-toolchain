@@ -110,7 +110,7 @@ static int compare_data(const struct Data *d1, const struct Data *d2) {
 const struct NFData *
 builtin_equals_data__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != DataType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));
@@ -124,7 +124,7 @@ builtin_equals_data__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_equals_data__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != DataType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

@@ -2,11 +2,11 @@
 
 const struct NFData *builtin_un_idata__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != DataType) {
-    diverge();
+    error_out();
   }
 
   if (scope->first->value.data.sort != IntegerS) {
-    diverge();
+    error_out();
   }
 
   return scope->first->value.data.value.integer;
