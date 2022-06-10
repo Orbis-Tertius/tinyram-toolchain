@@ -6,7 +6,7 @@
 const struct NFData *
 builtin_length_bytestring__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   const struct ByteString *bs = &scope->first->value.byteString;

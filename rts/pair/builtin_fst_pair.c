@@ -2,7 +2,7 @@
 
 const struct NFData *builtin_fst_pair__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != PairType) {
-    diverge();
+    error_out();
   }
 
   return scope->first->value.pair.fst;

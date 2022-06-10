@@ -8,7 +8,7 @@ static size_t fromIntegral(const struct Integer *integer) {
 const struct NFData *
 builtin_slice_bytestring__app_3(const struct LexicalScope *scope) {
   if (scope->first->type != ByteStringType) {
-    diverge();
+    error_out();
   }
 
   const struct Integer *start = &scope->rest->rest->first->value.integer;
@@ -42,7 +42,7 @@ builtin_slice_bytestring__app_3(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_slice_bytestring__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));
@@ -57,7 +57,7 @@ builtin_slice_bytestring__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_slice_bytestring__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

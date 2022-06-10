@@ -3,7 +3,7 @@
 const struct NFData *
 builtin_constr_data__app_2(const struct LexicalScope *scope) {
   if (scope->first->type != ListType) {
-    diverge();
+    error_out();
   }
 
   // check that the list is of correct type
@@ -25,7 +25,7 @@ builtin_constr_data__app_2(const struct LexicalScope *scope) {
 const struct NFData *
 builtin_constr_data__app_1(const struct LexicalScope *scope) {
   if (scope->first->type != IntegerType) {
-    diverge();
+    error_out();
   }
 
   struct NFData *data = (struct NFData *)alloc(sizeof(struct NFData));

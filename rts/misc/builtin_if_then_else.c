@@ -13,7 +13,7 @@ builtin_if_then_else__app_3(const struct LexicalScope *scope) {
   const struct NFData *cond = s->first;
 
   if (cond->type != BoolType) {
-    diverge();
+    error_out();
   }
 
   // should check that 'a' and 'b' have the same types

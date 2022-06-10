@@ -77,3 +77,31 @@ executable uplc2c
   ghc-options:
           -Wall -Werror -Wcompat -fwarn-redundant-constraints -fwarn-incomplete-uni-patterns
           -fwarn-tabs -fwarn-incomplete-record-updates -fwarn-identities -Wmissing-export-lists
+
+
+test-suite uplc2c-test
+  type:           exitcode-stdio-1.0
+  main-is:        Main.hs
+  exposed-modules: Test
+  other-modules:   Generator Model ToUPLC
+
+  hs-source-dirs: test
+  ghc-options:
+  build-depends:
+    base >= 4.9 && < 5,
+    hedgehog -any,
+    QuickCheck,
+    hedgehog-quickcheck,
+    quickcheck-transformer,
+    quickcheck-instances,
+    transformers,
+    plutus-core,
+    uplc2c,
+    bytestring,
+    text,
+    mmorph,
+    temporary,
+    process,
+    raw-strings-qq,
+    process-extras,
+    directory

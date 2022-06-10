@@ -11,8 +11,13 @@
 // The heap size. This may need to be adjusted on a per-program basis.
 #define HEAP_SIZE (1024 * 16)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // We represent program failure by non-termination.
-void diverge() __attribute__((noreturn));
+
+void error_out() __attribute__((noreturn));
 
 /*****************************************************************************
  * Memory management
@@ -32,7 +37,7 @@ extern unsigned char *heap_free;
 
 // Allocates the given number of bytes of memory and returns a pointer to the
 // beginning of the allocated memory.
-void *alloc(WORD bytes);
+void *alloc(size_t bytes);
 
 /*****************************************************************************
  * Integers
@@ -195,6 +200,7 @@ DEF(builtin_head_list);
 DEF(builtin_tail_list);
 DEF(builtin_null_list);
 DEF(builtin_mk_cons);
+DEF(builtin_choose_list);
 
 DEF(builtin_if_then_else);
 DEF(builtin_choose_unit);
@@ -228,3 +234,8 @@ DEF(builtin_encode_utf8);
 DEF(builtin_decode_utf8);
 
 DEF(builtin_trace);
+DEF(builtin_error);
+// Declarations of this file
+#ifdef __cplusplus
+}
+#endif
