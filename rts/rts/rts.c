@@ -4,18 +4,18 @@
 
 #include "./rts.h"
 
+void diverge() __attribute__((noreturn));
 void diverge() {
   while (1) {
   }
 }
 
 void error_out() {
-#ifdef __tinyRAM__
-  diverge();
-#else
+#ifndef __tinyRAM__
   void abort(void);
   abort();
 #endif
+  diverge();
 }
 
 /*****************************************************************************
