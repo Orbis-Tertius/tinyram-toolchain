@@ -3,22 +3,20 @@ set(CMAKE_SYSTEM_NAME               Generic)
 # Without that flag CMake is not able to pass test compilation check
 set(CMAKE_TRY_COMPILE_TARGET_TYPE   STATIC_LIBRARY)
 
-set(TINYRAM_TOOLCHAIN_PATH "/home/marcin/projects/llvm-project/build/bin/")
+set(CMAKE_AR                        llvm-ar)
+set(CMAKE_ASM_COMPILER              clang)
+set(CMAKE_C_COMPILER                clang)
+set(CMAKE_CXX_COMPILER              clang++)
 
-set(CMAKE_AR                        ${TINYRAM_TOOLCHAIN_PATH}llvm-ar)
-set(CMAKE_ASM_COMPILER              ${TINYRAM_TOOLCHAIN_PATH}clang)
-set(CMAKE_C_COMPILER                ${TINYRAM_TOOLCHAIN_PATH}clang)
-set(CMAKE_CXX_COMPILER              ${TINYRAM_TOOLCHAIN_PATH}clang++)
-
-set(CMAKE_CUSTOM_LINKER             ${TINYRAM_TOOLCHAIN_PATH}ld.lld)
+set(CMAKE_CUSTOM_LINKER             ld.lld)
 set(CMAKE_C_LINK_EXECUTABLE
 	"${CMAKE_CUSTOM_LINKER} --entry main <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 set(CMAKE_CXX_LINK_EXECUTABLE
 	"${CMAKE_CUSTOM_LINKER} --entry main <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
-set(CMAKE_OBJCOPY                   ${TINYRAM_TOOLCHAIN_PATH}llvm-objcopy)
-set(CMAKE_RANLIB                    ${TINYRAM_TOOLCHAIN_PATH}llvm-ranlib)
-set(CMAKE_SIZE                      ${TINYRAM_TOOLCHAIN_PATH}llvm-size)
-set(CMAKE_STRIP                     ${TINYRAM_TOOLCHAIN_PATH}llvm-strip)
+set(CMAKE_OBJCOPY                   llvm-objcopy)
+set(CMAKE_RANLIB                    llvm-ranlib)
+set(CMAKE_SIZE                      llvm-size)
+set(CMAKE_STRIP                     llvm-strip)
 
 set(CMAKE_C_FLAGS                   "-target tinyRAM -std=c11 -mllvm -enable-tail-merge=false")
 set(CMAKE_CXX_FLAGS                 "-target tinyRAM -mllvm -enable-tail-merge=false")
