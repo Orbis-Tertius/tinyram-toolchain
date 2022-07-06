@@ -124,7 +124,7 @@ compile incDir libDir term = do
     command :: String
     command =
       [r|
-/nix/store/rfdx35kbgh9xx25x67jcl9zhshqhy794-gcc-wrapper-10.3.0/bin/c++ \
+c++ \
   -I %s/rts/ \
   -I %s/gmp/ \
   -o %s \
