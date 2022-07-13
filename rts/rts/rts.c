@@ -22,7 +22,7 @@ void error_out() {
  * Memory management
  *****************************************************************************/
 
-unsigned char _heap[HEAP_SIZE] __attribute__((aligned(4)));
+unsigned char _heap[HEAP_SIZE] __attribute__((aligned(8)));
 
 unsigned char *heap_end = &_heap[0] + HEAP_SIZE;
 unsigned char *heap_free = &_heap[0];
