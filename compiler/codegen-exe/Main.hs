@@ -85,6 +85,7 @@ data_and_rodata_section_init:
 
 generate :: SInit -> Writer T.Text ()
 generate (SInit startSymbol' content') = do
+    -- this comment is important as it is used by finish-building.sh script
     tell $ T.pack $ "// init-symbol: " ++ startSymbol' ++ "\n"
     sequence_ (toInst <$> chopByteString (Offset 0) asList)
     where
@@ -128,9 +129,12 @@ main = do
 validateSection :: MonadFail m => ElfSection -> m ()
 validateSection section = do
     when (elfSectionAddrAlign section /= 8)     (fail "Unexpected alignment")
-    -- when (len1 `mod` 4 /= 0)                    (fail "Unexpected size")
-    -- when (len2 `mod` 4 /= 0)                    (fail "Unexpected data size")
     when (len1 /= fromIntegral len2)            (fail "Non-equal sizes")
+    -- Length of the section is not necessarily multiple of word size!
+    -- Since whole words are written by generator one has to ensure
+    -- that an adjacent section is not overwritten.
+    -- It is ensured by enforcing alignment of all sections to at least word size.
+    -- It is done in finish-building.sh script and linker script.
     where
         len1 = elfSectionSize section
         len2 = BS.length (elfSectionData section)
