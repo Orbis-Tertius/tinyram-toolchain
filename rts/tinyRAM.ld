@@ -9,22 +9,25 @@ SECTIONS
     {
 	KEEP(*(.preamble_section))
 	KEEP(*(.start_section))
-        *(.text)
+        *(.text*)
     }
 
-    .rodata :
+    . = ALIGN(8);
+    .rodata (NOLOAD):
     {
-        *(.rodata)
+        .rodata*
     }
 
-    .data :
+    . = ALIGN(8);
+    .data (NOLOAD):
     {
-        *(.data)
+        .data*
     }
 
-    .bss :
+    . = ALIGN(8);
+    .bss (NOLOAD):
     {
-        *(.bss)
+        .bss*
     }
 
 

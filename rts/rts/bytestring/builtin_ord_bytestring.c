@@ -20,7 +20,13 @@ static enum Ordering compare(const struct ByteString *bs1,
   } else if (r < 0) {
     return LT;
   } else {
-    return EQ;
+    if (bs1->length < bs2->length) {
+      return LT;
+    } else if (bs1->length > bs2->length) {
+      return GT;
+    } else {
+      return EQ;
+    }
   }
 }
 

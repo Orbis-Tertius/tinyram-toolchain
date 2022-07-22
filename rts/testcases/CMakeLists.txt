@@ -4,19 +4,28 @@ FILE(GLOB Sources "*.plc.c")
 
 foreach(s ${Sources})
 
-  get_filename_component(test ${s} NAME_WE)
-  add_executable(${test} ${s})
-  target_link_libraries(${test} rts)
-
   if (${CMAKE_CROSSCOMPILING})
-    target_link_options(${test} PUBLIC "-T${CMAKE_SOURCE_DIR}/tinyRAM.ld")
-    target_link_libraries(${test} -whole-archive bootstrap)
+    get_filename_component(test ${s} NAME_WE)
+    add_library(${test} ${s})
+
+    target_link_libraries(${test} PUBLIC rts)
+    target_link_libraries(${test} PUBLIC -whole-archive bootstrap)
+
+    set(BINARY "${CMAKE_CURRENT_BINARY_DIR}/${test}.o")
 
     add_custom_command(
-      TARGET ${test}
-      POST_BUILD
-      COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${CMAKE_CURRENT_BINARY_DIR}/${test} ${CMAKE_CURRENT_BINARY_DIR}/${test}.bin
+      OUTPUT ${BINARY}
+      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/finish-building.sh ${BINARY} ${PROJECT_SOURCE_DIR} $<TARGET_FILE:gmp> $<TARGET_FILE:rts> $<TARGET_FILE:bootstrap> $<TARGET_FILE:${test}>
+      DEPENDS gmp rts bootstrap ${test}
+      COMMENT "Manually finish building ${test}"
+      VERBATIM
     )
+
+    add_custom_target(${test}.finish ALL DEPENDS ${BINARY})
+  else()
+    get_filename_component(test ${s} NAME_WE)
+    add_executable(${test} ${s})
+    target_link_libraries(${test} rts)
   endif()
 endforeach()
 
