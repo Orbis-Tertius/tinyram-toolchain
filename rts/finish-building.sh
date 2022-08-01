@@ -45,15 +45,12 @@ cabal run codegen $dir/merged.o $dir/generated.s
 
 clang -target tinyRAM -o $dir/generated.o -c $dir/generated.s
 
-echo "Globalize symbols"
+echo "Make global symbols at the beginning of a section"
 
-toGlobalize=$(cat $dir/generated.s | grep '// init-symbol:' | awk '{print $3}' | tr [:space:] "\n")
+toGlobalize=$(cat $dir/generated.s | grep '// init-symbol:' | awk "{ print \"llvm-objcopy --add-symbol \" \$3 \"=\" \$4 \":\" \$5 \",global,object\", \"$dir/merged.o\" }")
 echo -e "$toGlobalize" > $dir/globalize
-
-llvm-objcopy \
-  --globalize-symbols=$dir/globalize \
-  $dir/merged.o \
-  $dir/merged_globalized.o
+chmod u+x $dir/globalize
+$dir/globalize
 
 echo "Finally link an executable"
 
@@ -61,7 +58,7 @@ ld.lld -T${project}/tinyRAM.ld \
 	--gc-sections \
 	--entry main \
 	-o $dest \
-        $dir/merged_globalized.o \
+        $dir/merged.o \
 	$dir/generated.o
 
 #llvm-objdump --triple=tinyRAM -Drt $dest | less

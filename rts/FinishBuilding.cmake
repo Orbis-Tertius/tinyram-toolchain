@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-FILE(GLOB Sources "*.plc.c")
-
-foreach(s ${Sources})
+macro(Finish sources)
 
   if (${CMAKE_CROSSCOMPILING})
     get_filename_component(test ${s} NAME_WE)
@@ -15,7 +13,7 @@ foreach(s ${Sources})
 
     add_custom_command(
       OUTPUT ${BINARY}
-      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/finish-building.sh ${BINARY} ${PROJECT_SOURCE_DIR} $<TARGET_FILE:gmp> $<TARGET_FILE:rts> $<TARGET_FILE:bootstrap> $<TARGET_FILE:${test}>
+      COMMAND ${PROJECT_SOURCE_DIR}/finish-building.sh ${BINARY} ${PROJECT_SOURCE_DIR} $<TARGET_FILE:gmp> $<TARGET_FILE:rts> $<TARGET_FILE:bootstrap> $<TARGET_FILE:${test}>
       DEPENDS gmp rts bootstrap ${test}
       COMMENT "Manually finish building ${test}"
       VERBATIM
@@ -27,5 +25,6 @@ foreach(s ${Sources})
     add_executable(${test} ${s})
     target_link_libraries(${test} rts)
   endif()
-endforeach()
+
+endmacro()
 
