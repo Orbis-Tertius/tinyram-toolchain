@@ -20,5 +20,6 @@ endif()
 add_subdirectory(rts)
 add_subdirectory(gmp)
 
-add_subdirectory(testcases)
+add_subdirectory(uplc-testcases)
+add_subdirectory(csmith-testcases)
 

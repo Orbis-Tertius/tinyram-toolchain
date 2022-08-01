@@ -10,7 +10,6 @@ import qualified Data.ByteString           as BS
 
 import           Data.Bits                 (shiftL)
 import qualified Data.Text                 as T
-import           Data.Text.Encoding
 import qualified Data.Text.IO              as TIO
 import           Data.Word                 (Word8)
 import           GHC.Exts                  (toList)
@@ -18,7 +17,6 @@ import           Text.Printf
 import           Text.RawString.QQ         (r)
 
 import           Data.Elf
-import           Data.Maybe                (isJust)
 import           Debug.Trace
 import qualified Options.Applicative       as O
 import           Text.Regex.TDFA
@@ -51,11 +49,6 @@ parseCommand = liftIO $ O.execParser commandInfo
 
 -- Code generation
 
-data SInit = SInit {
-    startSymbol :: String
-  , content     :: BS.ByteString
-} deriving (Show)
-
 newtype Offset = Offset Integer deriving (Num)
 newtype Constant = Constant Integer
 
@@ -83,15 +76,14 @@ init' = [r|
 data_and_rodata_section_init:
 |]
 
-generate :: SInit -> Writer T.Text ()
-generate (SInit startSymbol' content') = do
+generate :: ElfSection -> Writer T.Text ()
+generate section = do
     -- this comment is important as it is used by finish-building.sh script
-    tell $ T.pack $ "// init-symbol: " ++ startSymbol' ++ "\n"
     sequence_ (toInst <$> chopByteString (Offset 0) asList)
     where
       toInst :: (Offset, Constant) -> Writer T.Text ()
       toInst (Offset offset, Constant constant) =
-          tell (T.pack $ printf "mov %%r0, %d\nstore.w %s+%d, %%r0\n" constant startSymbol' offset)
+          tell (T.pack $ printf "mov %%r0, %d\nstore.w %d, %%r0\n" constant (addr + fromIntegral offset))
 
       asList :: [Word8]
       asList = let l = toList content'
@@ -100,16 +92,18 @@ generate (SInit startSymbol' content') = do
                      then l
                      else l ++ replicate (4 - m) 0
 
-createSInit :: MonadFail m => Elf -> String -> m [SInit]
+      content' = elfSectionData section
+
+      addr = elfSectionAddr section
+
+createSInit :: MonadFail m => Elf -> String -> m [ElfSection]
 createSInit elf sectionName = do
    let sections = findSections elf sectionName
    sequence $ createSInit' <$> sections
    where
     createSInit' section = do
         validateSection section
-        symbol <- findFirstSymbolEntry elf section
-        let name = maybe (error "Symbol name expected") (T.unpack . decodeUtf8) (snd (steName symbol))
-        return $ SInit name (elfSectionData section)
+        return section
 
 main :: IO ()
 main = do
@@ -145,22 +139,10 @@ findSections elf name = trace ("trace: " ++ show (elfSectionName <$> sections)) 
     regex = "^" ++ name ++ "[^ ]*$"
     sections = (\s -> elfSectionName s =~ regex) `filter` elfSections elf
 
-findFirstSymbolEntry :: MonadFail m => Elf -> ElfSection -> m ElfSymbolTableEntry
-findFirstSymbolEntry elf section =
-    case symbols of
-        symbol:_ -> return symbol
-        []       -> fail "No symbol found"
-    where
-      table = join (parseSymbolTables elf)
-      doesBelong entry = steEnclosingSection entry == Just section
-      isFirstNamed entry = steValue entry == elfSectionAddr section
-      isNamed entry = isJust $ snd $ steName entry
-      symbols = liftM2 (&&) (liftM2 (&&) doesBelong isFirstNamed) isNamed `filter` table
-
 validateElf :: MonadFail m => Elf -> m ()
 validateElf elf = do
     when (elfClass      elf /= ELFCLASS32)    (fail "ELF32")
     when (elfData       elf /= ELFDATA2MSB)   (fail "ELFDATA2MSB")
-    when (elfType       elf /= ET_REL)        (fail "ET_REL")
+    when (elfType       elf /= ET_EXEC)       (fail "ET_EXEC")
     when (elfMachine    elf /= EM_EXT 253)    (fail "EM_EXT")
 

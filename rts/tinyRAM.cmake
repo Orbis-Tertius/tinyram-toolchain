@@ -22,9 +22,9 @@ set(CMAKE_C_FLAGS                   "-target tinyRAM -std=c11 -mllvm -enable-tai
 set(CMAKE_CXX_FLAGS                 "-target tinyRAM -mllvm -enable-tail-merge=false")
 set(CMAKE_ASM_FLAGS                 "-target tinyRAM")
 
-set(CMAKE_ASM_FLAGS_DEBUG           "-O0" CACHE INTERNAL "")
+set(CMAKE_ASM_FLAGS_DEBUG           "-O1" CACHE INTERNAL "")
 set(CMAKE_ASM_FLAGS_RELEASE         "-O3 -DNDEBUG" CACHE INTERNAL "")
-set(CMAKE_C_FLAGS_DEBUG             "-O0" CACHE INTERNAL "")
+set(CMAKE_C_FLAGS_DEBUG             "-O1" CACHE INTERNAL "")
 set(CMAKE_C_FLAGS_RELEASE           "-O3 -DNDEBUG" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS_DEBUG           "${CMAKE_C_FLAGS_DEBUG}" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS_RELEASE         "${CMAKE_C_FLAGS_RELEASE}" CACHE INTERNAL "")
