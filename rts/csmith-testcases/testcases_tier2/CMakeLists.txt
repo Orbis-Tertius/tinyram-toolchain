@@ -13,6 +13,11 @@ foreach(s ${Sources})
 Finish("${s}")
 
 get_filename_component(test ${s} NAME_WE)
-add_dependencies(csmith_tier2_tests ${test})
+
+if (${CMAKE_CROSSCOMPILING})
+  add_dependencies(csmith_tier2_tests ${test}.finish)
+else()
+  add_dependencies(csmith_tier2_tests ${test})
+endif()
 
 endforeach()

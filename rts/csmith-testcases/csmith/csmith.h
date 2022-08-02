@@ -37,6 +37,7 @@
 /*****************************************************************************/
 
 #include <stdint.h>
+#include <limits.h>
 #include "safe_math_macros.h"
 
 static uint32_t crc32_tab[256] = {

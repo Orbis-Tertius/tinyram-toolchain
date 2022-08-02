@@ -65,7 +65,7 @@ ld.lld -T${project}/tinyRAM.ld \
 
 echo "Objcopy"
 
-llvm-objcopy -O binary $dest $dest.bin
+llvm-objcopy --only-section=.text -O binary $dest $dest.bin
 
 echo "Cleanup"
 
