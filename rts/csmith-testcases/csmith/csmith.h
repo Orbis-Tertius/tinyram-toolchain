@@ -40,6 +40,7 @@
 #include <limits.h>
 #include "safe_math_macros.h"
 
+#if 0
 static uint32_t crc32_tab[256] = {
 	0,
 	1996959894,
@@ -298,7 +299,11 @@ static uint32_t crc32_tab[256] = {
 	1510334235,
 	755167117
 };
+#endif
+
+#if 0
 static uint32_t crc32_context = 0xFFFFFFFFUL;
+#endif
 
 #define NOINLINE __attribute__((noinline))
 //#define NOINLINE
@@ -334,10 +339,12 @@ crc32_gentab (void)
 //NOINLINE
 static void
 crc32_byte (uint8_t b) {
+#if 0
 	crc32_context =
 		((crc32_context >> 8) & 0x00FFFFFF) ^
 		crc32_tab[(crc32_context ^ b) & 0xFF];
         //printf("crc32_byte: %lX\n", crc32_context);
+#endif
 }
 
 //NOINLINE
@@ -361,7 +368,9 @@ transparent_crc (uint64_t val, char* vname, int flag)
         //printf("transparent_crc: %lX, %lX\n", (uint32_t)val, (uint32_t)(val >> 32));
 	crc32_8bytes(val);
 	if (flag) {
+#if 0
 		printf("...checksum after hashing %s : %lX\n", vname, crc32_context ^ 0xFFFFFFFFUL);
+#endif
 	}
 }
 
@@ -373,7 +382,9 @@ transparent_crc_bytes (char *ptr, int nbytes, char* vname, int flag){
         crc32_byte(ptr[i]);
     }
 	if (flag) {
+#if 0
 		printf("...checksum after hashing %s : %lX\n", vname, crc32_context ^ 0xFFFFFFFFUL);
+#endif
 	}
 }
 

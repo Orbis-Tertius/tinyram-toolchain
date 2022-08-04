@@ -10,65 +10,14 @@
 #include "csmith.h"
 
 
-static long __undefined;
+//static long __undefined;
 
 /* --- Struct/Union Declarations --- */
 /* --- GLOBAL VARIABLES --- */
-static uint8_t g_2 = 1UL;
 static int32_t g_4 = 0L;
-static uint32_t g_13 = 4294967295UL;
-static int32_t *g_17 = &g_4;
-static int32_t **g_16 = &g_17;
-static int16_t g_22 = 0L;
-static uint16_t g_27 = 0xE45BL;
 
-
-/* --- FORWARD DECLARATIONS --- */
-static int32_t  func_1(void);
-
-
-/* --- FUNCTIONS --- */
-/* ------------------------------------------ */
-/* 
- * reads : g_2 g_13 g_16 g_17 g_4 g_27
- * writes: g_13 g_16 g_4 g_27
- */
-__attribute__ ((noinline))
-static int32_t  func_1(void)
-{ /* block id: 0 */
-    int32_t *l_18 = &g_4;
-    int32_t *l_19 = &g_4;
-    int32_t *l_20 = &g_4;
-    int32_t *l_21 = &g_4;
-    int32_t *l_23 = &g_4;
-    int32_t *l_24 = &g_4;
-    int32_t *l_25 = (void*)0;
-    int32_t *l_26 = &g_4;
-    if (g_2)
-    { /* block id: 1 */
-        int32_t *l_3 = &g_4;
-        int32_t *l_5 = &g_4;
-        int32_t *l_6 = &g_4;
-        int32_t *l_7 = (void*)0;
-        int32_t *l_8 = (void*)0;
-        int32_t *l_9 = (void*)0;
-        int32_t *l_10 = &g_4;
-        int32_t *l_11 = (void*)0;
-        int32_t *l_12 = (void*)0;
-        g_13--;
-        g_16 = &l_11;
-    }
-    else
-    { /* block id: 4 */
-        (**g_16) = 0x948B0815L;
-        return (**g_16);
-    }
-    --g_27;
-    return (*l_21);
-}
-
-
-
+int32_t a = 4;
+int32_t b = 5;
 
 /* ---------------------------------------- */
 int main (void)
@@ -76,13 +25,9 @@ int main (void)
     int print_hash_value = 0;
     platform_main_begin();
     crc32_gentab();
-    func_1();
-    transparent_crc(g_2, "g_2", print_hash_value);
-    transparent_crc(g_4, "g_4", print_hash_value);
-    transparent_crc(g_13, "g_13", print_hash_value);
-    transparent_crc(g_22, "g_22", print_hash_value);
-    transparent_crc(g_27, "g_27", print_hash_value);
-    platform_main_end(crc32_context ^ 0xFFFFFFFFUL, print_hash_value);
+    //transparent_crc(g_4, "g_4", print_hash_value);
+    //platform_main_end(crc32_context ^ 0xFFFFFFFFUL, print_hash_value);
+    platform_main_end(a + b, print_hash_value);
     return 0;
 }
 
