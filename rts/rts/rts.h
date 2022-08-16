@@ -8,7 +8,7 @@
 #define BOOL int
 
 // The heap size. This may need to be adjusted on a per-program basis.
-#define HEAP_SIZE (1024 * 128)
+#define HEAP_SIZE (10240 * 128)
 
 #ifdef __cplusplus
 extern "C" {
@@ -143,6 +143,9 @@ struct List {
   const struct List *next;
 };
 
+typedef struct List list_t;
+typedef struct Pair pair_t;
+
 union NFDataValue {
   struct Closure fn;
   struct Integer integer;
@@ -175,6 +178,23 @@ extern "C"
 #endif
     void
     print(const struct NFData *data);
+
+struct Buffer {
+  const uint32_t *buf;
+  size_t len;
+};
+
+typedef struct Buffer buffer_t;
+typedef struct NFData nfdata_t;
+
+struct Deserialize {
+  nfdata_t *data;
+  buffer_t rest;
+};
+
+typedef struct Deserialize deserialize_t;
+
+deserialize_t deserialize_data(buffer_t);
 
 int compare_bytestring(const struct ByteString *bs1,
                        const struct ByteString *bs2);

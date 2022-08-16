@@ -13,6 +13,7 @@ library
     UPLC2C.Compile
     UPLC2C.CompileFunctionDefinition
     UPLC2C.Prelude
+    UPLC2C.Serialization
     UPLC2C.TermToCProgram
     UPLC2C.Types.CCode
     UPLC2C.Types.CName
@@ -102,7 +103,7 @@ test-suite uplc2c-test
   type:           exitcode-stdio-1.0
   main-is:        Main.hs
   exposed-modules: Test
-  other-modules:   Generator Model ToUPLC
+  other-modules:   Generator Model ToUPLC SerializationTest ShowInstances
 
   hs-source-dirs: test
   ghc-options:

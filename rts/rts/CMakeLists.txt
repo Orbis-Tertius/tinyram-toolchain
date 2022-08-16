@@ -5,8 +5,10 @@ FILE(GLOB Sources *.c bytestring/*.c string/*.c data/*.c integer/*.c list/*.c mi
 add_library(rts
 	    STATIC
 	    ${Sources}
-	    print.cpp)
+	    print.cpp
+	    deserialize_data.c)
 
 target_link_libraries(rts gmp)
 
 target_include_directories(rts PUBLIC .)
+

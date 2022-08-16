@@ -43,6 +43,8 @@ import qualified Data.List                                as L
 import           Data.Text                                (unpack)
 import           Data.Text.Encoding                       (decodeUtf8)
 import           GHC.Exts                                 (toList)
+import           SerializationTest                        (prop_serdes)
+import           ShowInstances
 import           System.Directory
 import           System.Environment                       (lookupEnv)
 import           System.Exit                              (ExitCode (ExitFailure, ExitSuccess))
@@ -53,45 +55,14 @@ import           System.Process.ByteString                (readProcessWithExitCo
 import           Text.Printf                              (printf)
 import           Text.RawString.QQ                        (r)
 
+import qualified PlutusCore.Data                          as D
+
 newtype Fiziu = Fiziu NamedUPLCTerm
   deriving (Show)
 
 type DeBruijnTerm = UPLC.Term UPLC.DeBruijn UPLC.DefaultUni UPLC.DefaultFun
 type DefaultError = UPLC.Error UPLC.DefaultUni UPLC.DefaultFun
 
-newtype Show2DeBruijnTerm = Show2DeBruijnTerm (DeBruijnTerm ())
-
-instance Show Show2DeBruijnTerm where
-  show (Show2DeBruijnTerm term) = case term of
-    UPLC.Var () (UPLC.DeBruijn (UPLC.Index i)) -> "(Idx " ++ show i ++ ")"
-    UPLC.LamAbs () _ te                        -> "(Lam " ++ show te ++ ")"
-    UPLC.Apply () te te'                       -> "(App " ++ show te ++ " " ++ show te' ++ ")"
-    UPLC.Force () te                           -> "(For " ++ show te ++ ")"
-    UPLC.Delay () te                           -> "(Del " ++ show te ++ ")"
-    UPLC.Constant () so                        -> showConstant so
-    UPLC.Builtin () df                         -> show df
-    UPLC.Error ()                              -> "error"
-
-showBytestring :: BS.ByteString -> String
-showBytestring bs = let l1 = fromIntegral <$> toList bs :: [Integer]
-                        l2 = L.concat . L.intersperse "," $ show <$> l1
-                     in "{" ++ l2 ++ "}"
-
-showConstant :: Some (ValueOf UPLC.DefaultUni) -> String
-showConstant constant = case constant of
-    Some (ValueOf DefaultUniInteger v)         -> show v
-    Some (ValueOf DefaultUniBool v)            -> show v
-    Some (ValueOf DefaultUniUnit v)            -> show v
-    Some (ValueOf DefaultUniByteString bs)     -> showBytestring bs
-    Some (ValueOf DefaultUniString s)          -> show s
-    Some (ValueOf (DefaultUniPair xUni yUni) (x, y)) ->
-      "(" ++ showConstant (Some (ValueOf xUni x)) ++
-      "," ++ showConstant (Some (ValueOf yUni y)) ++
-      ")"
-    Some (ValueOf (DefaultUniList eUni) list)     ->
-      let l = showConstant . Some . ValueOf eUni <$> list in
-          "[" ++ L.intercalate "," l ++ "]"
-    _ -> undefined
 
 instance QC.Arbitrary Fiziu where
   arbitrary = do
@@ -166,5 +137,6 @@ prop_plutus =
       (Left _, Left (Right _))     -> HH.failure
       _                            -> HH.failure
 main = HH.checkSequential $ Group "Test.Example" [
-      ("prop_plutus", withTests (TestLimit 300) prop_plutus)
+       ("prop_serdes",  withTests (TestLimit 1000) prop_serdes)
+     , ("prop_plutus", withTests (TestLimit 300) prop_plutus)
     ]

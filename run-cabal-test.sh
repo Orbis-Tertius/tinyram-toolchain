@@ -9,7 +9,7 @@ rts_build_dir=$(mktemp -d)
 cd $rts_build_dir
 
 cmake $rts_src_dir
-make gmp rts
+make gmp rts deserialize
 
 export UPLC2C_INC_DIR=$rts_src_dir
 export UPLC2C_LIB_DIR=$rts_build_dir
