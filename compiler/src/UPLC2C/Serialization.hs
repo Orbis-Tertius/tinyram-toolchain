@@ -10,6 +10,22 @@ import           Data.Word       (Word32, Word8)
 import           GHC.Exts        (IsList (fromList), toList)
 import           PlutusCore.Data
 
+{-
+
+Design decisions:
+- Every encoding field has a size that is a multiple of word size and is aligned to a word.
+The reason for this is that in TinyRAM byte accessess are expensive and word accesses to unaligned memory cells are prohibited.
+- The encoding minimizes numer of instructions needed for decoding.
+That's because when proving TinyRAM execution traces we care for number of steps the most.
+- The encoding does NOT care about encoded size efficiency.
+One usually trades encoded size efficiency and deserialization speed. The latter is a priority for us.
+- C deserialization implementation follows Haskell deserialization implementation.
+Haskell deserialization implementation is here for clarity and for a reference.
+- List size is represented as Word32 for 32-bit TinyRAM machine.
+That's not really a limitation because bigger structures won't fit in TinyRAM memory anyway.
+
+-}
+
 constrType :: Word32
 constrType = 0
 
