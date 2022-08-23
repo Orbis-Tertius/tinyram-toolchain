@@ -87,7 +87,59 @@ std::string _print(const struct NFData *data) {
   };
 
   case DataType: {
-    return "Data";
+    DataSort s = data->value.data.sort;
+    switch (s) {
+    case ConstrS: {
+      std::stringstream ss;
+
+      const nfdata_t *integerListPair =
+          data->value.data.value.constr.integerListPair;
+
+      ss << "(Constr ";
+      ss << _print(integerListPair->value.pair.fst);
+      ss << " ";
+      ss << _print(integerListPair->value.pair.snd);
+      ss << ")";
+
+      return ss.str();
+    }
+    case MapS: {
+      std::stringstream ss;
+
+      ss << "(Map ";
+      ss << _print(data->value.data.value.map.pairList);
+      ss << ")";
+
+      return ss.str();
+    }
+    case ListS: {
+      std::stringstream ss;
+
+      ss << "(List ";
+      ss << _print(data->value.data.value.list.list);
+      ss << ")";
+
+      return ss.str();
+    }
+    case IntegerS: {
+      std::stringstream ss;
+
+      ss << "(Integer ";
+      ss << _print(data->value.data.value.integer);
+      ss << ")";
+
+      return ss.str();
+    }
+    case ByteStringS: {
+      std::stringstream ss;
+
+      ss << "(BS ";
+      ss << _print(data->value.data.value.byteString);
+      ss << ")";
+
+      return ss.str();
+    }
+    }
   };
 
   case TextType: {

@@ -23,3 +23,6 @@ add_subdirectory(gmp)
 add_subdirectory(uplc-testcases)
 add_subdirectory(csmith-testcases)
 
+if (NOT ${CMAKE_CROSSCOMPILING})
+  add_subdirectory(bin)
+endif()
