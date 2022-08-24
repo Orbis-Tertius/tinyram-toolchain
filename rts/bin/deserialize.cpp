@@ -2,12 +2,15 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include <stdint.h>
 
 using namespace std;
+
+// SIGABT (-6) on parsing failure
 
 std::vector<char> readFile(string path) {
   ifstream ifd(path, ios::binary | ios::ate);
@@ -25,6 +28,25 @@ std::vector<char> readFile(string path) {
   return buffer;
 }
 
+std::string to_string(const buffer_t &buffer) {
+  if (buffer.len == 0) {
+    return "[]";
+  }
+
+  std::stringstream ss;
+  ss << "[";
+
+  for (size_t i = 0; i < buffer.len - 1; i++) {
+    ss << to_string(buffer.buf[i]) << ",";
+  }
+
+  ss << to_string(buffer.buf[buffer.len - 1]);
+
+  ss << "]";
+
+  return ss.str();
+}
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     cout << "Pass serialized file path" << endl;
@@ -38,12 +60,9 @@ int main(int argc, char **argv) {
   auto deserialized =
       deserialize_data(buffer_t{(uint32_t *)buffer.data(), buffer.size() / 4});
 
-  if (deserialized.rest.len != 0) {
-    cout << "Unexpected remnants at the end of buffer" << endl;
-    return 1;
-  }
-
   print(deserialized.data);
+  cout << endl;
+  cout << to_string(deserialized.rest);
 
   return 0;
 }

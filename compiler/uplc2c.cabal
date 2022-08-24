@@ -124,4 +124,5 @@ test-suite uplc2c-test
     process,
     raw-strings-qq,
     process-extras,
-    directory
+    directory,
+    lens
