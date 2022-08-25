@@ -43,7 +43,8 @@ import qualified Data.List                                as L
 import           Data.Text                                (unpack)
 import           Data.Text.Encoding                       (decodeUtf8)
 import           GHC.Exts                                 (toList)
-import           SerializationTest                        (prop_serdes)
+import           SerializationTest                        (prop_serdes_fault_injection,
+                                                           prop_serdes_roundtrip)
 import           ShowInstances
 import           System.Directory
 import           System.Environment                       (lookupEnv)
@@ -137,6 +138,7 @@ prop_plutus =
       (Left _, Left (Right _))     -> HH.failure
       _                            -> HH.failure
 main = HH.checkSequential $ Group "Test.Example" [
-       ("prop_serdes",  withTests (TestLimit 1000) prop_serdes)
+       ("prop_serdes_fault_injection", withTests (TestLimit 1000) prop_serdes_fault_injection)
+     , ("prop_serdes_roundtrip", withTests (TestLimit 1000) prop_serdes_roundtrip)
      , ("prop_plutus", withTests (TestLimit 300) prop_plutus)
     ]
