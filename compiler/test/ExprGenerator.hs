@@ -9,7 +9,7 @@
 {-# LANGUAGE TypeOperators       #-}
 
 
-module Generator where
+module ExprGenerator where
 import           Data.Foldable                        (toList)
 import           Data.Maybe
 import           Data.Type.Equality

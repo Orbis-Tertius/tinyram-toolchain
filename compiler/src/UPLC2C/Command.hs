@@ -10,7 +10,7 @@ import           Data.Text.IO                (writeFile)
 import qualified Options.Applicative         as O
 import           Plutus.V1.Ledger.Scripts    (Script (..))
 
-import           UPLC2C.Compile              (compile)
+import           UPLC2C.Compile              (Mode (..), compile)
 import           UPLC2C.Prelude
 import           UPLC2C.Types.CCode          (CCode (..))
 import           UPLC2C.Types.InputFilePath  (InputFilePath (..))
@@ -30,7 +30,8 @@ import           UntypedPlutusCore           as UPLC (DefaultFun, DefaultUni,
 import           UntypedPlutusCore.DeBruijn  (unNameDeBruijn)
 import           UntypedPlutusCore.Parser    as UPLC (parseProgram)
 
-data Command = CompileFile Bool InputFilePath OutputFilePath
+
+data Command = CompileFile Bool Mode InputFilePath OutputFilePath
 
 
 main :: MonadIO m => m ()
@@ -48,13 +49,16 @@ inputFilePath =
 plc :: O.Parser Bool
 plc = O.switch ( O.long "plc" <> O.help "If set file is interpreted as *.plc file instead of CBOR" )
 
+mode :: O.Parser Mode
+mode =  (\b -> if b then Validator else Standalone) <$> O.switch ( O.long "validator" <> O.help "If to be interpreted as validator script that is to be applied to Script Context" )
+
 outputFilePath :: O.Parser OutputFilePath
 outputFilePath =
   O.argument (OutputFilePath <$> O.str) (O.metavar "OUTPUT" <> O.help "The output file path")
 
 
 command :: O.Parser Command
-command = CompileFile <$> plc <*> inputFilePath <*> outputFilePath
+command = CompileFile <$> plc <*> mode <*> inputFilePath <*> outputFilePath
 
 
 commandInfo :: O.ParserInfo Command
@@ -67,7 +71,7 @@ commandInfo =
 
 
 runCommand :: MonadIO m => Command -> m ()
-runCommand (CompileFile isPLC inPath outPath) = compileFile isPLC inPath outPath
+runCommand (CompileFile isPLC mode' inPath outPath) = compileFile isPLC mode' inPath outPath
 
 
 type UntypedProgram = UPLC.Program DeBruijn DefaultUni DefaultFun
@@ -82,20 +86,20 @@ parsePLC bs = do
     toNameless = programMapNames unNameDeBruijn
 
 
-compileFile :: MonadIO m => Bool -> InputFilePath -> OutputFilePath -> m ()
-compileFile False (InputFilePath inFilePath) (OutputFilePath outFilePath) = do
+compileFile :: MonadIO m => Bool -> Mode -> InputFilePath -> OutputFilePath -> m ()
+compileFile False mode' (InputFilePath inFilePath) (OutputFilePath outFilePath) = do
   inFileBytes <- liftIO $ readFile inFilePath
   case deserialiseOrFail inFileBytes of
     Right (Script (UPLC.Program _ _ term)) -> do
-      CCode objectCode <- compile term
+      CCode objectCode <- compile mode' term
       liftIO $ writeFile outFilePath objectCode
     Left _ ->
       liftIO $ putStrLn "input is not a valid UPLC CBOR representation"
-compileFile True (InputFilePath inFilePath) (OutputFilePath outFilePath) = do
+compileFile True mode' (InputFilePath inFilePath) (OutputFilePath outFilePath) = do
     inFileBytes <- liftIO $ readFile inFilePath
     case parsePLC inFileBytes of
       Right (UPLC.Program _ _ term) -> do
-        CCode objectCode <- trace ("term: " ++ show term) $ compile term
+        CCode objectCode <- trace ("term: " ++ show term) $ compile mode' term
         liftIO $ writeFile outFilePath objectCode
       Left e ->
         liftIO $ putStrLn ("input is not a valid PLC file: " ++ show e)

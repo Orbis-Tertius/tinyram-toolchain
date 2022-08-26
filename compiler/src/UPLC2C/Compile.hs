@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 
-module UPLC2C.Compile ( compile ) where
+module UPLC2C.Compile ( compile, Mode(..) ) where
 
 
 import qualified Data.Map                         as Map
@@ -19,14 +19,19 @@ import           UPLC2C.Types.CProgramBuilder     (CProgramBuilder (getProgram))
 import qualified UPLC2C.Types.CProgramBuilderT    as CProgramBuilderT
 import           UPLC2C.Types.UPLCTerm            (UPLCTerm)
 
+data Mode = Standalone | Validator
 
-compile :: MonadIO m => UPLCTerm -> m CCode
-compile term = do
+compile :: MonadIO m => Mode -> UPLCTerm -> m CCode
+compile mode term = do
   (program, entryPointName) <- CProgramBuilderT.run $ do
     entryPointName <- termToCProgram term
     program <- getProgram
     return (program, entryPointName)
-  let code = CCode "#include \"rts.h\"\n\n" <> programCode program <> CCode (pack (printf "\n\n\n\nint main() { const struct NFData * data = %s(0); print(data); return 0; }\n" (unCName entryPointName)))
+  let code = CCode "#include \"rts.h\"\n\n" <> programCode program <> case mode of
+        Standalone ->
+          CCode (pack (printf "\n\n\n\nint main() { const struct NFData * data = %s(0);                    print(data); return 0; }\n" (unCName entryPointName)))
+        Validator ->
+          CCode (pack (printf "\n\n\n\nint main() { const struct NFData * data = apply_script_args (& %s); print(data); return 0; }\n" (unCName entryPointName)))
   return code
 
 

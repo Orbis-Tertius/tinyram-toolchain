@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 
 #include "mini-gmp.h"
@@ -186,6 +188,7 @@ struct Buffer {
 
 typedef struct Buffer buffer_t;
 typedef struct NFData nfdata_t;
+typedef struct LexicalScope lexicalScope_t;
 
 struct Deserialize {
   nfdata_t *data;
@@ -195,6 +198,23 @@ struct Deserialize {
 typedef struct Deserialize deserialize_t;
 
 deserialize_t deserialize_data(buffer_t);
+
+struct Tapes {
+  buffer_t publicT;
+  buffer_t privateT;
+};
+
+typedef struct Tapes tapes_t;
+
+#ifdef __cplusplus
+extern "C"
+#endif
+    tapes_t
+    readTapes();
+
+typedef const nfdata_t *(*func_t)(const struct LexicalScope *);
+
+const nfdata_t *apply_script_args(func_t func);
 
 int compare_bytestring(const struct ByteString *bs1,
                        const struct ByteString *bs2);
