@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project (UPLC2C_RTS)
 
+enable_language(ASM)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -ffunction-sections")

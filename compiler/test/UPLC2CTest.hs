@@ -7,7 +7,8 @@ import           Control.Monad.Trans.Except               (runExcept)
 import           Data.Text
 import qualified Data.Text
 import           Data.Text.Encoding                       (decodeUtf8)
-import           Env                                      (incDirVar, libDirVar)
+import           Env                                      (incDirVar,
+                                                           x86LibDirVar)
 import           ExprGenerator
 import           Hedgehog
 import qualified Hedgehog                                 as HH
@@ -78,7 +79,7 @@ namedToDeBruijn t =
 
 compileRun :: NamedUPLCTerm -> IO (Either Abort String)
 compileRun namedTerm = do
-    (libDir, incDir) <- (,) <$> libDirVar <*> incDirVar
+    (libDir, incDir) <- (,) <$> x86LibDirVar <*> incDirVar
     case namedToDeBruijn namedTerm of
       Left err   -> fail (show err)
       Right term -> compile incDir libDir term
