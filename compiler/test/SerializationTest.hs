@@ -9,6 +9,8 @@ import           Data.Bits                            (Bits (shiftR), (.&.))
 import qualified Data.ByteString                      as BS
 import           Data.Functor.Identity
 import           Data.Word                            (Word32)
+import           DataGenerator
+import           Env                                  (libDirVar)
 import           GHC.Exts                             (fromList)
 import           GHC.IO.Handle                        (hFlush)
 import           Hedgehog                             (GenT, Group (Group),
@@ -33,37 +35,12 @@ import           System.Process                       (readProcessWithExitCode)
 import qualified Test.QuickCheck                      as QC
 import           Test.QuickCheck.Instances.ByteString
 import           UPLC2C.Serialization
-
-instance QC.Arbitrary Data where
-  arbitrary = arbitrary' 0
-    where
-      arbitrary' :: Integer -> QC.Gen Data
-      arbitrary' n = if n > 8
-        then QC.oneof [bGen, iGen]
-        else QC.oneof [bGen, iGen, mapGen (n + 1), listGen (n + 1), constrGen (n + 1)]
-
-      bGen = B <$> QC.resize 16 QC.arbitrary
-      iGen = I <$> QC.arbitrary
-
-      listOf' n = QC.listOf $ arbitrary' n
-      mapGen n = Map <$> QC.resize 5 (zip <$> listOf' n <*> listOf' n)
-      listGen n = List <$> QC.resize 5 (listOf' n)
-      constrGen n = uncurry Constr <$> ((,) <$> QC.arbitrary <*> QC.resize 5 (listOf' n))
-
-libDirVar :: String
-libDirVar = "UPLC2C_LIB_DIR"
+import           Util                                 (toBS, withTempFile)
 
 deserializeBinPath :: IO String
 deserializeBinPath = do
-    env <- lookupEnv libDirVar
-    case env of
-      Nothing -> fail ""
-      Just s  -> return $ s ++ "/bin/deserialize"
-
-toBS :: [Word32] -> BS.ByteString
-toBS l = fromList $ toBytes =<< l
-  where
-    toBytes w = fromIntegral . (.&. 0xff) <$> [w, w `shiftR` 8,  w `shiftR` 16,  w `shiftR` 24]
+    env <- libDirVar
+    return $ env ++ "/bin/deserialize"
 
 newtype DeserializeError = DeserializeError Int
   deriving (Eq)
@@ -74,11 +51,7 @@ instance Show DeserializeError where
 executeDeserializeBin :: [Word32] -> IO (Either DeserializeError (String, [Word32]))
 executeDeserializeBin list = do
   bin <- deserializeBinPath
-  (filePath, handle) <- openBinaryTempFile "." "serialized.bin"
-  BS.hPut handle (toBS list)
-  hFlush handle
-  (exitCode, stdout, err) <- readProcessWithExitCode bin [filePath] mempty
-  removeFile filePath
+  (exitCode, stdout, err) <- withTempFile (toBS list) $ \filePath -> readProcessWithExitCode bin [filePath] mempty
   case exitCode of
     ExitSuccess -> do
       case lines stdout of

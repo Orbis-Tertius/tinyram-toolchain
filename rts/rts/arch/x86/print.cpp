@@ -1,12 +1,6 @@
 
 #include "rts.h"
 
-#ifdef __tinyRAM__
-
-void print(const struct NFData *data) { (void)data; }
-
-#else
-
 #include <cstdio>
 #include <iomanip>
 #include <ios>
@@ -155,5 +149,3 @@ std::string _print(const struct NFData *data) {
 }
 
 extern "C" void print(const struct NFData *data) { std::cout << _print(data); }
-
-#endif

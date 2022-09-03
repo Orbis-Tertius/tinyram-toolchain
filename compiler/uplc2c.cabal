@@ -103,7 +103,7 @@ test-suite uplc2c-test
   type:           exitcode-stdio-1.0
   main-is:        Main.hs
   exposed-modules: Test
-  other-modules:   Generator Model ToUPLC SerializationTest ShowInstances
+  other-modules:   Util ExprGenerator DataGenerator Env Model ToUPLC UPLC2CTest SCApplicationTest SerializationTest ShowInstances
 
   hs-source-dirs: test
   ghc-options:

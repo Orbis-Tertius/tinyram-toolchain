@@ -1,11 +1,13 @@
 #include "mini-gmp.h"
 #include <rts.h>
 
-static const uint32_t constrType = 0;
-static const uint32_t mapType = 1;
-static const uint32_t listType = 2;
-static const uint32_t integerType = 3;
-static const uint32_t byteStringType = 4;
+enum ConstrTypes {
+  constrType = 0,
+  mapType = 1,
+  listType = 2,
+  integerType = 3,
+  byteStringType = 4
+};
 
 static nfdata_t *alloc_nfdata() { return (nfdata_t *)alloc(sizeof(nfdata_t)); }
 static list_t *alloc_list() { return (list_t *)alloc(sizeof(list_t)); }
