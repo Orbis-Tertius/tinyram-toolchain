@@ -12,6 +12,7 @@
     #   used for libsodium-vrf
     plutus.url = "github:input-output-hk/plutus/0836d25ecc469d8a3494bf6db10fc8404da522ec";
     plutus-apps.url = "github:input-output-hk/plutus-apps/ac3f39e1c4384ce44fdb8c321985ac447e85e411";
+    tinyram.url = "github:Orbis-Tertius/tinyram/f3a2ae87597b0d37934cc6a6da25fe905ff5ee59";
     flake-parts = {
       url = "github:hercules-ci/flake-modules-core";
     };
