@@ -10,7 +10,7 @@ import qualified Data.ByteString                      as BS
 import           Data.Functor.Identity
 import           Data.Word                            (Word32)
 import           DataGenerator
-import           Env                                  (libDirVar)
+import           Env                                  (x86LibDirVar)
 import           GHC.Exts                             (fromList)
 import           GHC.IO.Handle                        (hFlush)
 import           Hedgehog                             (GenT, Group (Group),
@@ -39,7 +39,7 @@ import           Util                                 (toBS, withTempFile)
 
 deserializeBinPath :: IO String
 deserializeBinPath = do
-    env <- libDirVar
+    env <- x86LibDirVar
     return $ env ++ "/bin/deserialize"
 
 newtype DeserializeError = DeserializeError Int

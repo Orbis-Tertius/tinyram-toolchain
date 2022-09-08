@@ -212,6 +212,8 @@ extern "C"
     tapes_t
     readTapes();
 
+__attribute__((noinline)) void putC(unsigned char c);
+
 typedef const nfdata_t *(*func_t)(const struct LexicalScope *);
 
 const nfdata_t *apply_script_args(func_t func);
